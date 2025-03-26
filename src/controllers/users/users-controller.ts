@@ -1,5 +1,4 @@
 import { prisma } from "../../extras/prisma";
-import { getPaginationParams } from "../../extras/pagination";
 import { GetMeError, type GetMeResult, type GetAllUsersResult, GetAllUsersError } from "./users-types.ts";
 
 export const getMe = async (parameters: { userId: string }): Promise<GetMeResult> => {
@@ -14,28 +13,21 @@ export const getMe = async (parameters: { userId: string }): Promise<GetMeResult
   return { user };
 };
 
-export const getAllUsers = async (query: { [key: string]: string | undefined }): Promise<GetAllUsersResult> => {
-  try {
-    const { page, limit, offset } = getPaginationParams(query);
-    
-    const totalUsers = await prisma.user.count();
-    const users = await prisma.user.findMany({
-      orderBy: { username: "asc" }, // Alphabetical order
-      skip: offset,
-      take: limit,
-    });
+export const getAllUsers = async (page: number = 1, limit: number = 10): Promise<GetAllUsersResult> => {
+  const skip = (page - 1) * limit;
 
-    return {
-      users,
-      pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(totalUsers / limit),
-        totalUsers,
-        limit,
-        hasNextPage: offset + limit < totalUsers,
-      },
-    };
-  } catch (error) {
-    throw new Error(GetAllUsersError.INVALID_PAGINATION);
-  }
+  const users = await prisma.user.findMany({
+    orderBy: { username: "asc" }, // Sort alphabetically
+    skip,
+    take: limit,
+  });
+
+  const totalUsers = await prisma.user.count(); // Get total number of users
+
+  return {
+    users,
+    totalUsers,
+    totalPages: Math.ceil(totalUsers / limit),
+    currentPage: page,
+  };
 };
