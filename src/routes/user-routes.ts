@@ -44,7 +44,7 @@ usersRoutes.get("/me", tokenMiddleware, async (context) => {
 
 
 // Returns all the users in alphabetical order of their names (paginated).
-//localhost:3000/users?page=1&limit=5 (for pagination)
+//localhost:3000/users?page=1&limit=2 (for pagination)
 usersRoutes.get("", tokenMiddleware, async (context) => {
   try {
     const page = parseInt(context.req.query("page") || "1", 10);
