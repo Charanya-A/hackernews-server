@@ -9,5 +9,16 @@ export enum GetMeError {
 }
 
 export type GetAllUsersResult = {
-  user: User[];
+  users: User[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalUsers: number;
+    limit: number;
+    hasNextPage: boolean;
+  };
 };
+
+export enum GetAllUsersError {
+  INVALID_PAGINATION = "INVALID_PAGINATION",
+}

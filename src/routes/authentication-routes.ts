@@ -5,6 +5,7 @@ import { LogInWithUsernameAndPasswordError, signUpWithUsernameAndPasswordError }
 export const authenticationRoutes = new Hono();
 
 
+// Signs up a user (leverages JWT)
 authenticationRoutes.post("/sign-in",async(context)=>{
     const {username, password} = await context.req.json();
     try {
@@ -39,6 +40,7 @@ authenticationRoutes.post("/sign-in",async(context)=>{
     });
 
 
+    // Logs in a user (leverages JWT)
     authenticationRoutes.post("/log-in", async(context) => {
       try{
         const{username, password} = await context.req.json();
