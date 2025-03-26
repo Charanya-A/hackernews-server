@@ -17,7 +17,6 @@ datasource db {
 model User {
   id        String    @id @default(uuid())
   username  String    @unique
-  email     String    @unique
   password  String
   posts     Post[] // Relationship: One user can create many posts
   comments  Comment[] // Relationship: One user can create many comments
