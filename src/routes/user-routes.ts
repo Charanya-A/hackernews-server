@@ -9,38 +9,35 @@ export const usersRoutes = new Hono();
 
 // Returns the current user's details (based on JWT token).
 usersRoutes.get("/me", tokenMiddleware, async (context) => {
-  const userId = context.get("userId");
-
   try {
-    const user = await getMe({
-      userId,
-    });
+    const userId = context.get("userId");
 
-    return context.json(
-      {
-        data: user,
-      },
-      200
-    );
-  } catch (e) {
-    if (e === GetMeError.BAD_REQUEST) {
+    if (!userId) {
       return context.json(
-        {
-          error: "User not found",
-        },
-        400
-      );
+        { 
+          error: "Unauthorized"
+         }, 
+         401);
     }
 
+    const result = await getMe({ userId });
+
     return context.json(
+      { 
+        data: result.user 
+      }, 
+      200);
+  } catch (error) {
+    if ((error as Error).message === GetMeError.BAD_REQUEST) 
       {
-        message: "Internal Server Error",
-      },
-      500
-    );
+      return context.json({ error: GetMeError.BAD_REQUEST }, 
+        400);
+      }
+
+    return context.json({ error: "Internal Server Error" }, 
+      500);
   }
 });
-
 
 
 // Returns all the users in alphabetical order of their names (paginated).
@@ -49,23 +46,20 @@ usersRoutes.get("", tokenMiddleware, async (context) => {
   try {
     const page = parseInt(context.req.query("page") || "1", 10);
     const limit = parseInt(context.req.query("limit") || "10", 10);
-if (page < 1 || limit < 1){
-  return context.json({
-message: "Invalid pagination"}, 400);  }
-    const users = await getAllUsers(page, limit);
 
-    return context.json(
-      {
-        data: users,
-      },
-      200
-    );
-  } catch (e) {
-    return context.json(
-      {
-        message: "Internal Server Error",
-      },
-      500
-    );
+    if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) 
+    {
+      return context.json({ error: GetAllUsersError.INVALID_PAGINATION }, 
+        400);
+    }
+
+    const result = await getAllUsers(page, limit);
+
+    return context.json({ data: result.users, pagination: result.pagination }, 
+      200);
+  } catch (error) 
+  {
+    return context.json({ error: "Internal Server Error" }, 
+      500);
   }
 });

@@ -5,7 +5,7 @@ export type GetMeResult = {
 };
 
 export enum GetMeError {
-  BAD_REQUEST,
+  BAD_REQUEST = "User not found",
 }
 
 export interface UserResponse {
@@ -15,15 +15,20 @@ export interface UserResponse {
   updatedAt: Date;
 }
 
-export interface GetAllUsersResult {
-  users: UserResponse[];
+export interface PaginationMeta {
   totalUsers: number;
   totalPages: number;
   currentPage: number;
+  limit: number;
+  hasNextPage: boolean;
 }
 
+export interface GetAllUsersResult {
+  users: UserResponse[];
+  pagination: PaginationMeta;
+}
 
 export enum GetAllUsersError {
-  INVALID_PAGINATION = "INVALID_PAGINATION",
-  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
+  INVALID_PAGINATION = "Invalid pagination parameters",
+  INTERNAL_SERVER_ERROR = "Internal server error",
 }
