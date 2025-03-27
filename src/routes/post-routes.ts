@@ -7,7 +7,7 @@ import { PostErrors } from "../controllers/post/post-types";
 export const postRoutes = new Hono();
 
 // Returns all posts in reverse chronological order (paginated)
-postRoutes.get("/", async (context) => {
+postRoutes.get("/", tokenMiddleware, async (context) => {
   try {
     const pageParam = context.req.query("page");
     const limitParam = context.req.query("limit");

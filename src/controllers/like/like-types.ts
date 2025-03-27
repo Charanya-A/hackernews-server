@@ -1,8 +1,12 @@
+import type { Like } from "@prisma/client";
+
 export interface LikeResponse {
     id: string;
     userId: string;
     postId: string;
     createdAt: Date;
+    message?: string;
+    like?: Like;
   }
   
   export interface PaginationMeta {

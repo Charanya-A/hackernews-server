@@ -7,18 +7,25 @@ export const likeRoutes = new Hono();
 
 
 // Returns all the likes in reverse chronological order (paginated) on the post referenced by postId
-likeRoutes.get("/on/:postId", async (context) => {
+likeRoutes.get("/on/:postId", tokenMiddleware, async (context) => {
   try {
     const postId = context.req.param("postId");
-    const page = parseInt(context.req.query("page") || "1", 10);
-    const limit = parseInt(context.req.query("limit") || "10", 10);
+    const pageParam = context.req.query("page");
+    const limitParam = context.req.query("limit");
+        
+        if (!pageParam || !limitParam || isNaN(Number(pageParam)) || isNaN(Number(limitParam))) {
+          return context.json({ message: LikeErrors.INVALID_PAGINATION }, 400);
+        }
+        
+        const page = parseInt(pageParam, 10);
+        const limit = parseInt(limitParam, 10);
+        
+        if (page < 1 || limit < 1) {
+          return context.json({ message: LikeErrors.INVALID_PAGINATION }, 400);
+        }
 
     if (!postId) {
       return context.json({ message: LikeErrors.POST_ID_REQUIRED }, 400);
-    }
-
-    if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
-      return context.json({ message: LikeErrors.INVALID_PAGINATION }, 400);
     }
 
     const likes = await getLikesOnPost(postId, page, limit);
@@ -50,8 +57,12 @@ likeRoutes.post("/on/:postId", tokenMiddleware, async (context) => {
         return context.json({ message: LikeErrors.POST_ID_REQUIRED }, 400);
       }
 
-    const like = await likePost(postId, userId);
-    return context.json({ data: like }, 201);
+      const like = await likePost(postId, userId);
+
+      return context.json({ 
+        message: "Post liked successfully", 
+        data: like 
+      }, 201);
   } catch (error) {
     const err = error as Error;
 
