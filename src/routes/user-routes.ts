@@ -44,14 +44,19 @@ usersRoutes.get("/me", tokenMiddleware, async (context) => {
 //localhost:3000/users?page=1&limit=2 (for pagination)
 usersRoutes.get("", tokenMiddleware, async (context) => {
   try {
-    const page = parseInt(context.req.query("page") || "1", 10);
-    const limit = parseInt(context.req.query("limit") || "10", 10);
+    const pageParam = context.req.query("page");
+const limitParam = context.req.query("limit");
 
-    if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) 
-    {
-      return context.json({ error: GetAllUsersError.INVALID_PAGINATION }, 
-        400);
-    }
+if (!pageParam || !limitParam || isNaN(Number(pageParam)) || isNaN(Number(limitParam))) {
+  return context.json({ error: GetAllUsersError.INVALID_PAGINATION }, 400);
+}
+
+const page = parseInt(pageParam, 10);
+const limit = parseInt(limitParam, 10);
+
+if (page < 1 || limit < 1) {
+  return context.json({ error: GetAllUsersError.INVALID_PAGINATION }, 400);
+}
 
     const result = await getAllUsers(page, limit);
 

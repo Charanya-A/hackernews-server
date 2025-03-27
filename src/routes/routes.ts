@@ -1,7 +1,7 @@
 import {Hono} from "hono";
 import { authenticationRoutes } from "./authentication-routes";
 import { usersRoutes } from "./user-routes.ts";
-//import { postRoutes } from "./post-routes.ts";
+import { postRoutes } from "./post-routes.ts";
 //import { commentRoutes } from "./comment-routes.ts";
 //import { likeRoutes } from "./like-routes.ts";
 import { prisma } from "../extras/prisma";
@@ -26,7 +26,7 @@ allRoutes.use(logger());
 // registers routes
 allRoutes.route("/auth", authenticationRoutes);
 allRoutes.route("/users", usersRoutes);
-// allRoutes.route("/posts", postRoutes);
+allRoutes.route("/posts", postRoutes);
 // allRoutes.route("/comments", commentRoutes);
 // allRoutes.route("/likes", likeRoutes);
 
