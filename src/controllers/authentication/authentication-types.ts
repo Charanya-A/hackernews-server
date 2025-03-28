@@ -10,7 +10,7 @@ export type SignInWithUsernameAndPasswordResult = {
     user: User;
 };
 
-export type LogInWithUsernameAndPasswordResult={
+export type LogInWithUsernameAndPasswordResult = {
     token: string;
     user: User;
 };

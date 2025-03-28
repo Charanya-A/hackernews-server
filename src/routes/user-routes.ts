@@ -33,8 +33,7 @@ usersRoutes.get("/me", tokenMiddleware, async (context) => {
         400);
       }
 
-    return context.json({ error: "Internal Server Error" }, 
-      500);
+      return context.json({ message: GetAllUsersError.INTERNAL_SERVER_ERROR }, 500);
   }
 });
 
@@ -63,7 +62,6 @@ if (page < 1 || limit < 1) {
       200);
   } catch (error) 
   {
-    return context.json({ error: "Internal Server Error" }, 
-      500);
+    return context.json({ message: GetAllUsersError.INTERNAL_SERVER_ERROR }, 500);
   }
 });

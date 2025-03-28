@@ -103,6 +103,7 @@ postRoutes.delete("/:postId", tokenMiddleware, async (context) => {
         if (err.message === PostErrors.UNAUTHORIZED) {
           return context.json({ message: err.message }, { status: 403 });
         }
-        return context.json({ message: "Internal Server Error" }, { status: 500 });
+        return context.json({ message: PostErrors.INTERNAL_SERVER_ERROR }, 500);
       }
   });
+  
