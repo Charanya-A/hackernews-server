@@ -48,7 +48,7 @@ model Comment {
 
   parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id]) // Self-referencing relation
   parentId String?
-  replies  Comment[] @relation("CommentReplies") // Relation name must match
+  replies  Comment[] @relation("CommentReplies")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
