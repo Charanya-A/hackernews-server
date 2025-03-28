@@ -108,6 +108,10 @@ commentRoutes.delete("/:commentId", tokenMiddleware, async (context) => {
       return context.json({ message: err.message }, 403);
     }
 
+    if (err.message === CommentErrors.CANNOT_DELETE_WITH_REPLIES) {
+      return context.json({ message: err.message }, 400); 
+    }
+
     return context.json({ message: CommentErrors.INTERNAL_SERVER_ERROR }, 500);
   }
 });

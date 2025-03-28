@@ -32,6 +32,7 @@ export interface PaginationMeta {
     PARENT_COMMENT_NOT_FOUND : "The parent comment does not exist",
     UNAUTHORIZED: "User authentication required.",
     INVALID_PAGINATION: "Invalid pagination parameters.",
+    CANNOT_DELETE_WITH_REPLIES: "Cannot delete a comment that has replies.",
     INTERNAL_SERVER_ERROR: "Internal Server Error.",
   };
   

@@ -67,8 +67,8 @@ export const createComment = async (
     throw new Error(CommentErrors.POST_NOT_FOUND);
   }
 
-// Top-level comments will have parentId = NULL
-// Replies will have parentId set to the id of the parent comment
+  // Top-level comments will have parentId = NULL
+  // Replies will have parentId set to the id of the parent comment
 
   let parentComment = null;
 
@@ -108,7 +108,12 @@ export const deleteComment = async (commentId: string, userId: string): Promise<
     throw new Error(CommentErrors.UNAUTHORIZED);
   }
 
-  const comment = await prisma.comment.findUnique({ where: { id: commentId } });
+  // Fetch the comment along with its replies
+  const comment = await prisma.comment.findUnique({
+    where: { id: commentId },
+    include: { replies: true }, // Ensure replies are check
+  });
+
   if (!comment) {
     throw new Error(CommentErrors.COMMENT_NOT_FOUND);
   }
@@ -116,9 +121,17 @@ export const deleteComment = async (commentId: string, userId: string): Promise<
     throw new Error(CommentErrors.UNAUTHORIZED);
   }
 
+  // According to Hackernews-server, a parent comment cannot be deleted unless replies are deleted
+
+  // Prevent deletion if there are existing replies
+  if (comment.replies.length > 0) {                           
+    throw new Error(CommentErrors.CANNOT_DELETE_WITH_REPLIES);
+  }
+
+  // Delete the comment if no replies exist
   await prisma.comment.delete({ where: { id: commentId } });
 
-  return { message: "Comment deleted successfully."};
+  return { message: "Comment deleted successfully." };
 };
 
 

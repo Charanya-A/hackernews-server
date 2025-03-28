@@ -1,5 +1,6 @@
 import type { Post } from "@prisma/client";
 
+
 export interface PostResponse {
   id: string;
   title: string;

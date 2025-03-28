@@ -1,5 +1,6 @@
 import type { Like } from "@prisma/client";
 
+
 export interface LikeResponse {
     id: string;
     userId: string;
