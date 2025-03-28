@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { prisma } from "../extras/prisma";
 import { tokenMiddleware } from "./middlewares/token-middleware.ts";  // to ensure users are logged in
 import { getAllUsers, getMe } from "../controllers/users/users-controller.ts";
 import { GetAllUsersError, GetMeError } from "../controllers/users/users-types";

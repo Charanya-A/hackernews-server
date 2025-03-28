@@ -59,6 +59,10 @@ likeRoutes.post("/on/:postId", tokenMiddleware, async (context) => {
 
       const like = await likePost(postId, userId);
 
+      if (like) {
+        return context.json({ message: "This Post has already been liked", data: like }, 200);
+      }
+
       return context.json({ 
         message: "Post liked successfully", 
         data: like 
