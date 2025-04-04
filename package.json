@@ -2,9 +2,9 @@
   "name": "hackernews-server",
   "version": "1.0.0",
   "scripts": {
-    "start": "tsx src/index.ts",
+    "dev": "tsx watch -r dotenv/config src/index.ts",
     "build": "tsc -p tsconfig.build.json",
-    "dev": "tsx watch -r dotenv/config src/index.ts"
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.0",
