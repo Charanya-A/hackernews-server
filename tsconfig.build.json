@@ -7,9 +7,7 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "allowImportingTsExtensions": false,
-    "verbatimModuleSyntax": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "verbatimModuleSyntax": false
   },
   "include": ["src"]
 }
