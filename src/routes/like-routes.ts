@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { tokenMiddleware } from "./middlewares/token-middleware.ts";
+import { tokenMiddleware } from "./middlewares/token-middleware";
 import { getLikesOnPost, likePost, unlikePost } from "../controllers/like/like-controller";
 import { LikeErrors } from "../controllers/like/like-types";
 

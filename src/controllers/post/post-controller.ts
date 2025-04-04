@@ -3,7 +3,7 @@ import {
   type GetAllPostsResult,
   type PostResponse,
   PostErrors, type CreatePostParams
-} from "./post-types.ts";
+} from "./post-types";
 
 
 

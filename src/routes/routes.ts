@@ -1,9 +1,9 @@
 import {Hono} from "hono";
 import { authenticationRoutes } from "./authentication-routes";
-import { usersRoutes } from "./user-routes.ts";
-import { postRoutes } from "./post-routes.ts";
-import { likeRoutes } from "./like-routes.ts";
-import { commentRoutes } from "./comment-routes.ts";
+import { usersRoutes } from "./user-routes";
+import { postRoutes } from "./post-routes";
+import { likeRoutes } from "./like-routes";
+import { commentRoutes } from "./comment-routes";
 
 import { logger } from "hono/logger";
 
