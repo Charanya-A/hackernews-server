@@ -149,4 +149,6 @@ jobs:
             --registry-server "${{ env.ACR_REGISTRY }}" \
             --registry-username "${{ env.ACR_USERNAME }}" \
             --registry-password "${{ env.ACR_PASSWORD }}" \
-            --env-vars DATABASE_URL=${{ secrets.DATABASE_URL }} JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} 
+            --env-vars DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            DIRECT_URL=${{ secrets.DIRECT_URL }} 
