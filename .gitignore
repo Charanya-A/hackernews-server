@@ -11,9 +11,13 @@
 # deps
 node_modules/
 
+# build
+dist/
+build/
+
 # env
 .env
-.env.production
+.env.*
 
 # logs
 logs/
