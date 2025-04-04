@@ -2,7 +2,6 @@ FROM node:22.1.0
 
 WORKDIR /app
 
-# Copy Prisma folder only if it exists by copying everything, relying on .dockerignore
 COPY . .
 
 RUN npm install
