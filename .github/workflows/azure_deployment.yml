@@ -149,7 +149,11 @@ jobs:
             --registry-server "${{ env.ACR_REGISTRY }}" \
             --registry-username "${{ env.ACR_USERNAME }}" \
             --registry-password "${{ env.ACR_PASSWORD }}" \
-            --env-vars DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-            DIRECT_URL=${{ secrets.DIRECT_URL }} 
+            
+      - name: Set environment variables for Container App
+        run: |
+          az containerapp update \
+            --name "${{ env.CONTAINER_APP_NAME }}" \
+            --resource-group "${{ env.RESOURCE_GROUP }}" \
+            --set-env-vars JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} DATABASE_URL=${{ secrets.DATABASE_URL }} DIRECT_URL=${{secrets.DIRECT_URL}}
 

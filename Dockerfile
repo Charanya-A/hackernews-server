@@ -14,7 +14,7 @@ RUN npm install
 
 RUN if [ -f "./prisma/schema.prisma" ]; then npx prisma generate; else echo "Skipping prisma generate"; fi
 
-RUN npm run build && ls -l dist/src/index.js
+RUN npm run build
 
 EXPOSE 3000
 
