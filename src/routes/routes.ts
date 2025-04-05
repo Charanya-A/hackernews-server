@@ -41,36 +41,35 @@ allRoutes.get("/health",
   });
 
   
-  const swaggerDocument = {
-    openapi: "3.0.0",
-    info: {
-      title: "HackerNews API",
-      version: "2.0.3",
-      description: "HackerNews clone server"
-    },
-    servers: [
-      {
-        url: "http://localhost:3000",
-        description: "Development server",
+  allRoutes.get("/doc", (c) =>
+    c.json({
+      openapi: "3.0.0",
+      info: {
+        title: "HackerNews API",
+        version: "1.0.0",
+        description: "HackerNews clone server"
       },
-      {
-        url: "https://hackernews.delightfulcliff-db9337fb.centralindia.azurecontainerapps.io",
-        description: "Production server",
-      },
-    ],
-    tags: [
-      { name: "Authentication", description: "Authentication endpoints" },
-      { name: "Users", description: "User management endpoints" },
-      { name: "Posts", description: "Post management endpoints" },
-      { name: "Likes", description: "Like management endpoints" },
-      { name: "Comments", description: "Comment management endpoints" },
-    ],
-  };
+      servers: [
+        {
+          url: "http://localhost:3000",
+          description: "Development server"
+        },
+        {
+          url: "https://hackernews.delightfulcliff-db9337fb.centralindia.azurecontainerapps.io",
+          description: "Production server"
+        }
+      ],
+      tags: [
+        { name: "Authentication", description: "Authentication endpoints" },
+        { name: "Users", description: "User management endpoints" },
+        { name: "Posts", description: "Post management endpoints" },
+        { name: "Likes", description: "Like management endpoints" },
+        { name: "Comments", description: "Comment management endpoints" }
+      ]
+    })
+  );
   
-  // 📜 Swagger UI at /ui
-  allRoutes.get("/ui", swaggerUI({ url: "/docs" }));
-  
-  // 📄 Swagger JSON spec at /docs
-  allRoutes.get("/docs", (c) => c.json(swaggerDocument));
+  // Swagger UI route
+  allRoutes.get("/ui", swaggerUI({ url: "/doc" }));
 
   
