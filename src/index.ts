@@ -1,20 +1,17 @@
 import {allRoutes} from "./routes/routes";
 import {serve} from "@hono/node-server";
 import { Hono } from 'hono';
-import { swaggerUI } from '@hono/swagger-ui';
+
 
 
 const app = new Hono()
 
-// Use the middleware to serve Swagger UI at /ui
-app.get('/ui', swaggerUI({ url: '/doc' }))
-
-export default app
-
-
 serve(allRoutes, (info)=>{
     console.log(`server is running on port ${info.port}`);
 });
+
+
+
 
 
 // import {Hono} from "hono";
