@@ -31,7 +31,7 @@ export const sessionMiddleware = createMiddleware<{
 
   context.set("user", user);
   context.set("session", session.session);
-  context.set("userId", user.id); // ✅ Set userId just like tokenMiddleware
+  context.set("userId", user.id); 
 
   return await next();
 });
