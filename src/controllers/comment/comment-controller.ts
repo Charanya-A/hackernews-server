@@ -166,3 +166,12 @@ export const updateComment = async (
 
   return updatedComment;
 };
+
+
+export async function getCommentById(commentId: string) {
+  const comment = await prisma.comment.findUnique({
+    where: { id: commentId },
+  });
+
+  return comment;
+}

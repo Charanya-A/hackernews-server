@@ -1,4 +1,5 @@
 import { prisma } from "../../extras/prisma";
+import { prismaClient } from "../../integrations/prisma";
 import {
   type GetAllPostsResult,
   type PostResponse,
@@ -22,6 +23,14 @@ export const getAllPosts = async (
       orderBy: { createdAt: "desc" },  //Reverse chronological order
       skip,
       take: limit,
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
     });
   
     return {
@@ -147,3 +156,42 @@ export const getMyPosts = async (
   
     return { message: "Post deleted successfully" };
   };
+
+
+
+  export const getPostById = async (postId: string) => {
+    const post = await prismaClient.post.findUnique({
+      where: { id: postId },
+      include: {
+        user: { select: { id: true, username: true } },
+        comments: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            user: { select: { username: true } },
+            post: {
+              select: {
+                id: true ,
+                content: true,
+                title: true,
+                createdAt: true,
+                
+              
+            } },
+          },
+          orderBy: { createdAt: "desc" },
+        },
+      },
+    });
+  
+    if (!post) {
+      throw new Error("Post not found");
+    }
+  
+    return post;
+  };
+
+
+
+  

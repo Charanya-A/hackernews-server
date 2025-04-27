@@ -1,13 +1,14 @@
 import { Hono } from "hono";
 import { tokenMiddleware } from "./middlewares/token-middleware";
-import { getCommentsOnPost, createComment, deleteComment, updateComment } from "../controllers/comment/comment-controller";
+import { getCommentsOnPost, createComment, deleteComment, updateComment, getCommentById } from "../controllers/comment/comment-controller";
 import { CommentErrors } from "../controllers/comment/comment-types";
+import { sessionMiddleware } from "./middlewares/session-middleware";
 
 export const commentRoutes = new Hono();
 
 
 // Returns all the comments in reverse chronological order (paginated) on the post referenced by postId
-commentRoutes.get("/on/:postId", tokenMiddleware, async (context) => {
+commentRoutes.get("/on/:postId", sessionMiddleware, async (context) => {
   try {
     const postId = context.req.param("postId");
         const pageParam = context.req.query("page");
@@ -29,7 +30,7 @@ commentRoutes.get("/on/:postId", tokenMiddleware, async (context) => {
         }
     
 
-    const comments = await getCommentsOnPost(postId, page, limit);
+    const { comments } = await getCommentsOnPost(postId, page, limit);
     return context.json({ data: comments }, 200);
   } catch (error) {
       const err = error as Error;
@@ -45,7 +46,7 @@ commentRoutes.get("/on/:postId", tokenMiddleware, async (context) => {
 
 
 // Creates a comment (authored by the current user) on the post referenced by postId
-commentRoutes.post("/on/:postId", tokenMiddleware, async (context) => {
+commentRoutes.post("/on/:postId", sessionMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const postId = context.req.param("postId");
@@ -83,7 +84,7 @@ commentRoutes.post("/on/:postId", tokenMiddleware, async (context) => {
 
 
 // Deletes the comment (if existing and authored by the current user)
-commentRoutes.delete("/:commentId", tokenMiddleware, async (context) => {
+commentRoutes.delete("/:commentId", sessionMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const commentId = context.req.param("commentId");
@@ -119,7 +120,7 @@ commentRoutes.delete("/:commentId", tokenMiddleware, async (context) => {
 
 
 // Updates the comment's text (if existing and authored by the current user)
-commentRoutes.patch("/:commentId", tokenMiddleware, async (context) => {
+commentRoutes.patch("/:commentId", sessionMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const commentId = context.req.param("commentId");
@@ -158,6 +159,28 @@ commentRoutes.patch("/:commentId", tokenMiddleware, async (context) => {
         return context.json({ message: err.message }, 400);
       }
   
+      return context.json({ message: CommentErrors.INTERNAL_SERVER_ERROR }, 500);
+    }
+  });
+
+
+  commentRoutes.get("/:commentId", sessionMiddleware, async (context) => {
+    try {
+      const commentId = context.req.param("commentId");
+  
+      if (!commentId) {
+        return context.json({ message: CommentErrors.COMMENT_ID_REQUIRED }, 400);
+      }
+  
+      const comment = await getCommentById(commentId);
+  
+      if (!comment) {
+        return context.json({ message: CommentErrors.COMMENT_NOT_FOUND }, 404);
+      }
+  
+      return context.json({ data: comment }, 200);
+    } catch (error) {
+      console.error(error);
       return context.json({ message: CommentErrors.INTERNAL_SERVER_ERROR }, 500);
     }
   });

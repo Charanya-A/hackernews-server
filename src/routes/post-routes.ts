@@ -1,13 +1,15 @@
 import { Hono } from "hono";
 import { tokenMiddleware } from "./middlewares/token-middleware";
-import { getAllPosts, getMyPosts, createPost, deletePost } from "../controllers/post/post-controller";
+import { getAllPosts, getMyPosts, createPost, deletePost, getPostById } from "../controllers/post/post-controller";
 import { PostErrors } from "../controllers/post/post-types";
+import { sessionMiddleware } from "./middlewares/session-middleware";
+import { prisma } from "../extras/prisma";
 
 
 export const postRoutes = new Hono();
 
 // Returns all posts in reverse chronological order (paginated)
-postRoutes.get("/", tokenMiddleware, async (context) => {
+postRoutes.get("/", sessionMiddleware, async (context) => {
   try {
     const pageParam = context.req.query("page");
     const limitParam = context.req.query("limit");
@@ -23,7 +25,7 @@ postRoutes.get("/", tokenMiddleware, async (context) => {
       return context.json({ message: PostErrors.INVALID_PAGINATION }, 400);
     }
 
-    const posts = await getAllPosts(page, limit);
+    const { posts } = await getAllPosts(page, limit);
     return context.json({ data: posts }, 200);
   } catch (e) {
     return context.json({ message: PostErrors.INTERNAL_SERVER_ERROR }, 500);
@@ -32,7 +34,7 @@ postRoutes.get("/", tokenMiddleware, async (context) => {
 
 
 // Returns all posts in reverse chronological order of the current user (referenced by attached JWT) (paginated)
-postRoutes.get("/me", tokenMiddleware, async (context) => {
+postRoutes.get("/me", sessionMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const pageParam = context.req.query("page");
@@ -52,7 +54,7 @@ postRoutes.get("/me", tokenMiddleware, async (context) => {
         return context.json({ message: PostErrors.UNAUTHORIZED }, 401);
       }
 
-    const posts = await getMyPosts(userId, page, limit);
+    const { posts } = await getMyPosts(userId, page, limit);
     return context.json({ data: posts }, 200);
   } catch (e) {
     return context.json({ message: PostErrors.INTERNAL_SERVER_ERROR }, 500);
@@ -61,7 +63,7 @@ postRoutes.get("/me", tokenMiddleware, async (context) => {
 
 
 // Creates a post (authored by the current user)
-postRoutes.post("/", tokenMiddleware, async (context) => {
+postRoutes.post("/", sessionMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const { title, url, content } = await context.req.json();
@@ -79,7 +81,7 @@ postRoutes.post("/", tokenMiddleware, async (context) => {
 
 
 // Deletes a post (if it belongs to the user)
-postRoutes.delete("/:postId", tokenMiddleware, async (context) => {
+postRoutes.delete("/:postId", sessionMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const postId = context.req.param("postId");
@@ -106,4 +108,21 @@ postRoutes.delete("/:postId", tokenMiddleware, async (context) => {
         return context.json({ message: PostErrors.INTERNAL_SERVER_ERROR }, 500);
       }
   });
+
+
+postRoutes.get("/:postId", async (c) => {
+  try {
+    const postId = c.req.param("postId");
+    
+    const post = await getPostById(postId);
+
+    if (!post) {
+      return c.json({ error: "Post not found" }, 404);
+    }
+
+    return c.json({ post }, 200);
+  } catch (error) {
+    return c.json({ error: "Post not found" }, 404);
+  }
+});
   

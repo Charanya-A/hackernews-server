@@ -2,12 +2,13 @@ import { Hono } from "hono";
 import { tokenMiddleware } from "./middlewares/token-middleware";
 import { getLikesOnPost, likePost, unlikePost } from "../controllers/like/like-controller";
 import { LikeErrors } from "../controllers/like/like-types";
+import { sessionMiddleware } from "./middlewares/session-middleware";
 
 export const likeRoutes = new Hono();
 
 
 // Returns all the likes in reverse chronological order (paginated) on the post referenced by postId
-likeRoutes.get("/on/:postId", tokenMiddleware, async (context) => {
+likeRoutes.get("/on/:postId", sessionMiddleware, async (context) => {
   try {
     const postId = context.req.param("postId");
     const pageParam = context.req.query("page");
@@ -44,7 +45,7 @@ likeRoutes.get("/on/:postId", tokenMiddleware, async (context) => {
 
 
 // Creates a like (authored by the current user) on the post referenced by postId
-likeRoutes.post("/on/:postId", tokenMiddleware, async (context) => {
+likeRoutes.post("/on/:postId", sessionMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const postId = context.req.param("postId");
@@ -81,7 +82,7 @@ likeRoutes.post("/on/:postId", tokenMiddleware, async (context) => {
 
 
 // Deletes the like (if existing and authored by the current user) on the post referenced by postId
-likeRoutes.delete("/on/:postId", tokenMiddleware, async (context) => {
+likeRoutes.delete("/on/:postId", sessionMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const postId = context.req.param("postId");
@@ -108,3 +109,8 @@ likeRoutes.delete("/on/:postId", tokenMiddleware, async (context) => {
     return context.json({ message: "Internal Server Error" }, 500);
   }
 });
+
+
+
+
+

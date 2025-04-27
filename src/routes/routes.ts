@@ -6,8 +6,19 @@ import { likeRoutes } from "./like-routes";
 import { commentRoutes } from "./comment-routes";
 import { swaggerUI } from "@hono/swagger-ui";
 import { logger } from "hono/logger";
+import { cors } from "hono/cors";
+import { authRoute } from "./middlewares/session-middleware";
 
 export const allRoutes = new Hono();
+
+allRoutes.use(
+  cors({
+    origin: "http://localhost:4000", // Allow only the frontend URL
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true,
+  }),
+);
 
 //logging middleware
 
@@ -22,7 +33,9 @@ allRoutes.use(async(context, next)=> {
 allRoutes.use(logger());
 
 // registers routes
+
 allRoutes.route("/auth", authenticationRoutes);
+allRoutes.route("/api/auth", authRoute);
 allRoutes.route("/users", usersRoutes);
 allRoutes.route("/posts", postRoutes);
 allRoutes.route("/likes", likeRoutes);
