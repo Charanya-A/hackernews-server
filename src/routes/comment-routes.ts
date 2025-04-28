@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { tokenMiddleware } from "./middlewares/token-middleware";
-import { getCommentsOnPost, createComment, deleteComment, updateComment, getCommentById } from "../controllers/comment/comment-controller";
+import { getCommentsOnPost, createComment, deleteComment, updateComment, getCommentById} from "../controllers/comment/comment-controller";
 import { CommentErrors } from "../controllers/comment/comment-types";
 import { sessionMiddleware } from "./middlewares/session-middleware";
 
