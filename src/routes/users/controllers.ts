@@ -1,5 +1,5 @@
 import { prisma } from "../../extras/prisma";
-import { GetMeError, type GetMeResult, type GetAllUsersResult, GetAllUsersError } from "./users-types";
+import { GetMeError, type GetMeResult, type GetAllUsersResult, GetAllUsersError } from "./types";
 
 
 export const getMe = async (parameters: { userId: string }): Promise<GetMeResult> => {

@@ -1,8 +1,8 @@
 import { Hono } from "hono";
-import { tokenMiddleware } from "./middlewares/token-middleware";  // to ensure users are logged in
-import { getAllUsers, getMe } from "../controllers/users/users-controller";
-import { GetAllUsersError, GetMeError } from "../controllers/users/users-types";
-import { sessionMiddleware } from "./middlewares/session-middleware";
+import { sessionMiddleware } from "../middlewares/session-middleware";
+import { getAllUsers, getMe } from "./controllers";
+import { GetAllUsersError, GetMeError } from "./types";
+
 
 
 export const usersRoutes = new Hono();

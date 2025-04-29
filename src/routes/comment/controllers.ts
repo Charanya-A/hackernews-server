@@ -1,5 +1,5 @@
 import { prisma } from "../../extras/prisma";
-import { CommentErrors, type GetAllCommentsResult, type CommentResponse } from "./comment-types";
+import { CommentErrors, type GetAllCommentsResult, type CommentResponse } from "./types";
 
 
 export const getCommentsOnPost = async (

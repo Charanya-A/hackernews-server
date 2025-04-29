@@ -1,8 +1,10 @@
 import { Hono } from "hono";
-import { tokenMiddleware } from "./middlewares/token-middleware";
-import { getCommentsOnPost, createComment, deleteComment, updateComment, getCommentById} from "../controllers/comment/comment-controller";
-import { CommentErrors } from "../controllers/comment/comment-types";
-import { sessionMiddleware } from "./middlewares/session-middleware";
+import { tokenMiddleware } from "../middlewares/token-middleware";
+
+import { CommentErrors } from "./types";
+import { sessionMiddleware } from "../middlewares/session-middleware";
+import { prisma } from "../../extras/prisma";
+import { getCommentsOnPost, createComment, deleteComment, updateComment, getCommentById } from "./controllers";
 
 export const commentRoutes = new Hono();
 
@@ -184,3 +186,46 @@ commentRoutes.patch("/:commentId", sessionMiddleware, async (context) => {
       return context.json({ message: CommentErrors.INTERNAL_SERVER_ERROR }, 500);
     }
   });
+
+
+  // Fetch all comments (not just for a post)
+commentRoutes.get("/all", sessionMiddleware, async (context) => {
+  try {
+    const pageParam = context.req.query("page");
+    const limitParam = context.req.query("limit");
+
+    if (!pageParam || !limitParam || isNaN(Number(pageParam)) || isNaN(Number(limitParam))) {
+      return context.json({ message: CommentErrors.INVALID_PAGINATION }, 400);
+    }
+
+    const page = parseInt(pageParam, 10);
+    const limit = parseInt(limitParam, 10);
+
+    const skip = (page - 1) * limit;
+
+    const totalComments = await prisma.comment.count();
+    const comments = await prisma.comment.findMany({
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
+      include: {
+        user: { select: { id: true, username: true } },
+        post: { select: { id: true, title: true } },
+      },
+    });
+
+    return context.json({
+      data: comments,
+      pagination: {
+        totalComments,
+        totalPages: Math.ceil(totalComments / limit),
+        currentPage: page,
+        limit,
+        hasNextPage: page * limit < totalComments,
+      },
+    }, 200);
+  } catch (error) {
+    console.error(error);
+    return context.json({ message: CommentErrors.INTERNAL_SERVER_ERROR }, 500);
+  }
+});

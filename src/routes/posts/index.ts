@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { tokenMiddleware } from "./middlewares/token-middleware";
-import { getAllPosts, getMyPosts, createPost, deletePost, getPostById } from "../controllers/post/post-controller";
-import { PostErrors } from "../controllers/post/post-types";
-import { sessionMiddleware } from "./middlewares/session-middleware";
-import { prisma } from "../extras/prisma";
+import { tokenMiddleware } from "../middlewares/token-middleware";
+import { getAllPosts, getMyPosts, createPost, deletePost, getPostById } from "./controllers";
+import { PostErrors } from "./types";
+import { sessionMiddleware } from "../middlewares/session-middleware";
+import { prisma } from "../../extras/prisma";
 
 
 export const postRoutes = new Hono();

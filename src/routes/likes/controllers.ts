@@ -3,7 +3,7 @@ import {
   type GetAllLikesResult,
   type LikeResponse,
   LikeErrors
-} from "./like-types";
+} from "./types";
 
 
 

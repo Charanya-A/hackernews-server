@@ -4,7 +4,7 @@ import {
   type GetAllPostsResult,
   type PostResponse,
   PostErrors, type CreatePostParams
-} from "./post-types";
+} from "./types";
 
 
 
