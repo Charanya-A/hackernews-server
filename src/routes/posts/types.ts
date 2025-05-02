@@ -9,6 +9,9 @@ export interface PostResponse {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  user?: {
+    username: string;
+  };
 }
 
 export interface PaginationMeta {
@@ -39,4 +42,7 @@ export enum PostErrors {
   UNAUTHORIZED = "Unauthorized action",
   INTERNAL_SERVER_ERROR = "Internal Server Error",
   INVALID_POST_ID = "INVALID_POST_ID",
+  USER_NOT_FOUND = "User not found",
+  PAGE_BEYOND_LIMIT = "PAGE_BEYOND_LIMIT",
+  UNKNOWN = "UNKNOWN",
 }

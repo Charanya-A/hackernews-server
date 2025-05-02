@@ -1,4 +1,4 @@
-import { prisma } from "../../extras/prisma";
+import { prismaClient as prisma } from "../../integrations/prisma"
 import { CommentErrors, type GetAllCommentsResult, type CommentResponse } from "./types";
 
 
@@ -175,3 +175,5 @@ export async function getCommentById(commentId: string) {
 
   return comment;
 }
+
+

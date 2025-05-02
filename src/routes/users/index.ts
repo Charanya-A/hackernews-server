@@ -10,7 +10,7 @@ export const usersRoutes = new Hono();
 // Returns the current user's details (based on JWT token).
 usersRoutes.get("/me", sessionMiddleware, async (context) => {
   try {
-    const userId = context.get("userId");
+    const userId = context.get("user").id;
 
     if (!userId) {
       return context.json(

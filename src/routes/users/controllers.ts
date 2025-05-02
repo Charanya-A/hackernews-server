@@ -1,4 +1,4 @@
-import { prisma } from "../../extras/prisma";
+import { prismaClient as prisma } from "../../integrations/prisma"
 import { GetMeError, type GetMeResult, type GetAllUsersResult, GetAllUsersError } from "./types";
 
 
@@ -11,9 +11,8 @@ export const getMe = async (parameters: { userId: string }): Promise<GetMeResult
     throw new Error(String(GetMeError.BAD_REQUEST));
   }
 
-  return { user };
+  return { user: { ...user, password: undefined } };
 };
-
 
 
 export const getAllUsers = async (page: number = 1, limit: number = 10): Promise<GetAllUsersResult> => {

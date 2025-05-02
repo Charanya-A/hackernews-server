@@ -1,4 +1,4 @@
-import { prisma } from "../../extras/prisma";
+import { prismaClient as prisma } from "../../integrations/prisma"
 import {
   type GetAllLikesResult,
   type LikeResponse,
@@ -80,30 +80,55 @@ export const likePost = async (postId: string, userId: string): Promise<LikeResp
 
 
 export const unlikePost = async (postId: string, userId: string): Promise<{ message: string }> => {
-    if (!postId) {
-        throw new Error(LikeErrors.POST_ID_REQUIRED);
-      }
-    
-      if (!userId) {
-        throw new Error(LikeErrors.UNAUTHORIZED);
-      }
+  if (!postId) {
+    throw new Error(LikeErrors.POST_ID_REQUIRED);
+  }
+
+  if (!userId) {
+    throw new Error(LikeErrors.UNAUTHORIZED);
+  }
 
   const like = await prisma.like.findUnique({
     where: { userId_postId: { userId, postId } },
   });
 
-  if (!like) {
-    throw new Error(LikeErrors.LIKE_NOT_FOUND);
+  if (like) {
+    await prisma.like.delete({
+      where: { userId_postId: { userId, postId } },
+    });
+
+    return { message: "Unliked the post successfully" };
   }
 
-  await prisma.like.delete({
-    where: { userId_postId: { userId, postId } },
-  });
+  return { message: "Post was not liked by user, nothing to unlike" };
+};
 
-  return { message: "Unliked the post successfully" };
+
+export const getLikeStatus = async (postId: string, userId: string | null) => {
+  const totalLikes = await prisma.like.count({ where: { postId } });
+
+  let isLikedByCurrentUser = false;
+  if (userId) {
+    const like = await prisma.like.findUnique({
+      where: { userId_postId: { userId, postId } },
+    });
+    isLikedByCurrentUser = !!like;
+  }
+
+  return { totalLikes, isLikedByCurrentUser };
 };
 
 
 
+export const getLikeCount = async (postId: string): Promise<number> => {
+  if (!postId) {
+    throw new Error(LikeErrors.POST_ID_REQUIRED);
+  }
 
+  const likeCount = await prisma.like.count({
+    where: { postId },
+  });
+
+  return likeCount;
+};
 

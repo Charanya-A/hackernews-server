@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { sessionMiddleware } from "../middlewares/session-middleware";
 import { LikeErrors } from "./types";
-import { getLikesOnPost, likePost, unlikePost } from "./controllers";
+import { getLikeCount, getLikesOnPost, getLikeStatus, likePost, unlikePost } from "./controllers";
 
 
 export const likeRoutes = new Hono();
@@ -13,24 +13,28 @@ likeRoutes.get("/on/:postId", sessionMiddleware, async (context) => {
     const postId = context.req.param("postId");
     const pageParam = context.req.query("page");
     const limitParam = context.req.query("limit");
-        
-        if (!pageParam || !limitParam || isNaN(Number(pageParam)) || isNaN(Number(limitParam))) {
-          return context.json({ message: LikeErrors.INVALID_PAGINATION }, 400);
-        }
-        
-        const page = parseInt(pageParam, 10);
-        const limit = parseInt(limitParam, 10);
-        
-        if (page < 1 || limit < 1) {
-          return context.json({ message: LikeErrors.INVALID_PAGINATION }, 400);
-        }
+
+    if (!pageParam || !limitParam || isNaN(Number(pageParam)) || isNaN(Number(limitParam))) {
+      return context.json({ message: LikeErrors.INVALID_PAGINATION }, 400);
+    }
+
+    const page = parseInt(pageParam, 10);
+    const limit = parseInt(limitParam, 10);
+
+    if (page < 1 || limit < 1) {
+      return context.json({ message: LikeErrors.INVALID_PAGINATION }, 400);
+    }
 
     if (!postId) {
       return context.json({ message: LikeErrors.POST_ID_REQUIRED }, 400);
     }
 
-    const likes = await getLikesOnPost(postId, page, limit);
-    return context.json({ data: likes }, 200);
+    // Get likes and the total like count
+    const likes = await getLikesOnPost(postId, page, limit); // Assuming this fetches the likes list
+    const likeCount = await getLikeCount(postId); // This function should return the total like count for the post
+
+    // Return both likes and likeCount
+    return context.json({ data: likes, likeCount }, 200);
   } catch (error) {
     const err = error as Error;
 
@@ -41,6 +45,7 @@ likeRoutes.get("/on/:postId", sessionMiddleware, async (context) => {
     return context.json({ message: LikeErrors.INTERNAL_SERVER_ERROR }, 500);
   }
 });
+
 
 
 
@@ -112,5 +117,40 @@ likeRoutes.delete("/on/:postId", sessionMiddleware, async (context) => {
 
 
 
+likeRoutes.get("/status/:postId", sessionMiddleware, async (context) => {
+  try {
+    const userId = context.get("userId") || null;
+    const postId = context.req.param("postId");
+
+    if (!postId) {
+      return context.json({ message: LikeErrors.POST_ID_REQUIRED }, 400);
+    }
+
+    const status = await getLikeStatus(postId, userId);
+
+    return context.json({ data: status }, 200);
+  } catch (error) {
+    return context.json({ message: LikeErrors.INTERNAL_SERVER_ERROR }, 500);
+  }
+});
+
+
+likeRoutes.get("/count/:postId", async (context) => {
+  try {
+    const postId = context.req.param("postId");
+
+    if (!postId) {
+      return context.json({ message: LikeErrors.POST_ID_REQUIRED }, 400);
+    }
+
+    const likeCount = await getLikeCount(postId);
+
+    return context.json({ data: { likeCount } }, 200);
+  } catch (error) {
+    const err = error as Error;
+
+    return context.json({ message: err.message || LikeErrors.INTERNAL_SERVER_ERROR }, 500);
+  }
+});
 
 

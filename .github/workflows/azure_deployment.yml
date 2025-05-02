@@ -155,5 +155,5 @@ jobs:
           az containerapp update \
             --name "${{ env.CONTAINER_APP_NAME }}" \
             --resource-group "${{ env.RESOURCE_GROUP }}" \
-            --set-env-vars JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} DATABASE_URL=${{ secrets.DATABASE_URL }} DIRECT_URL=${{secrets.DIRECT_URL}} WEB_CLIENT_URL=${{secrets.WEB_CLIENT_URL}} BETTER_AUTH_SECRET=${{secrets.BETTER_AUTH_SECRET}}
+            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }} DIRECT_URL=${{secrets.DIRECT_URL}} WEB_CLIENT_URL=${{secrets.WEB_CLIENT_URL}} BETTER_AUTH_SECRET=${{secrets.BETTER_AUTH_SECRET}} SERVER_URL=${{secrets.SERVER_URL}}
 

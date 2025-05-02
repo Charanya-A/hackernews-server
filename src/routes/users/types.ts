@@ -1,7 +1,13 @@
 import type { User } from "@prisma/client";
 
 export type GetMeResult = {
-  user: User;
+  user: {
+    id: string;
+    username: string;
+    createdAt: Date;
+    updatedAt: Date;
+    password?: string; // Make password optional
+  };
 };
 
 export enum GetMeError {

@@ -1,9 +1,7 @@
 import { Hono } from "hono";
 import { tokenMiddleware } from "../middlewares/token-middleware";
-
 import { CommentErrors } from "./types";
 import { sessionMiddleware } from "../middlewares/session-middleware";
-import { prisma } from "../../extras/prisma";
 import { getCommentsOnPost, createComment, deleteComment, updateComment, getCommentById } from "./controllers";
 
 export const commentRoutes = new Hono();
@@ -166,6 +164,7 @@ commentRoutes.patch("/:commentId", sessionMiddleware, async (context) => {
   });
 
 
+
   commentRoutes.get("/:commentId", sessionMiddleware, async (context) => {
     try {
       const commentId = context.req.param("commentId");
@@ -186,4 +185,7 @@ commentRoutes.patch("/:commentId", sessionMiddleware, async (context) => {
       return context.json({ message: CommentErrors.INTERNAL_SERVER_ERROR }, 500);
     }
   });
+
+
+
 
