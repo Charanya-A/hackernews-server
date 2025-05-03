@@ -7,6 +7,7 @@ import { cors } from "hono/cors";
 import { authRoute } from "./middlewares/session-middleware";
 import { usersRoutes } from "./users";
 import { likeRoutes } from "./likes";
+import { authenticationRoutes } from "./authentication";
 
 export const allRoutes = new Hono();
 
@@ -33,7 +34,7 @@ allRoutes.use(logger());
 
 // registers routes
 
-
+allRoutes.route("/auth", authenticationRoutes);
 allRoutes.route("/api/auth", authRoute);
 allRoutes.route("/users", usersRoutes);
 allRoutes.route("/posts", postRoutes);

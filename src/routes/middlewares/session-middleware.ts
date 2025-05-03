@@ -7,7 +7,7 @@ import betterAuthServerClient from "../../integrations/better-auth";
 
 export const authRoute = new Hono();
 
-authRoute.on(["GET", "POST"], "*", (context) => {
+authRoute.on(["GET", "POST"], "/*", (context) => {
   return betterAuthServerClient.handler(context.req.raw);
 });
 
