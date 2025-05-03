@@ -1,4 +1,4 @@
-import type { Like } from "@prisma/client";
+import type { Like } from "../../generated/prisma";
 
 
 export interface LikeResponse {

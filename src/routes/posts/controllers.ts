@@ -5,7 +5,7 @@ import {
   type PostResponse,
   PostErrors, type CreatePostParams
 } from "./types";
-import { Prisma } from '@prisma/client'; 
+
 
 
 export const getAllPosts = async (
@@ -290,11 +290,11 @@ export const getMyPosts = async (
   
     const filter = {
       OR: [
-        { title: { contains: query, mode: Prisma.QueryMode.insensitive } },
-        { content: { contains: query, mode: Prisma.QueryMode.insensitive } },
-        { url: { contains: query, mode: Prisma.QueryMode.insensitive } },
-        { user: { is: { username: { contains: query, mode: Prisma.QueryMode.insensitive } } } },
-        { comments: { some: { content: { contains: query, mode: Prisma.QueryMode.insensitive } } } },
+        { title: { contains: query, mode: 'insensitive' as const } },
+        { content: { contains: query, mode: 'insensitive' as const } },
+        { url: { contains: query, mode: 'insensitive' as const } },
+        { user: { is: { username: { contains: query, mode: 'insensitive' as const } } } },
+        { comments: { some: { content: { contains: query, mode: 'insensitive' as const } } } },
       ],
     };
   
@@ -341,3 +341,4 @@ export const getMyPosts = async (
       throw new Error('Error retrieving posts');
     }
   };
+  

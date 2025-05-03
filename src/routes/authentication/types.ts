@@ -1,4 +1,5 @@
-import type { User } from "@prisma/client";
+import type { User } from "../../generated/prisma";
+
 
 export enum signUpWithUsernameAndPasswordError{
     CONFLICTING_USERNAME ="CONFLICTING_USERNAME",

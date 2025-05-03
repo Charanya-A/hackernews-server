@@ -1,5 +1,3 @@
-export const secretKey= process.env.JWT_SECRET_KEY || process.exit(1);
-
 export const serveUrl= process.env.SERVER_URL || process.exit(1);
 
 export const webClientUrl = process.env.WEB_CLIENT_URL || process.exit(1);

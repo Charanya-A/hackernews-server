@@ -1,5 +1,4 @@
 import {Hono} from "hono";
-import { authenticationRoutes } from "./authentication";
 import { postRoutes } from "./posts";
 import { commentRoutes } from "./comment";
 import { swaggerUI } from "@hono/swagger-ui";
@@ -34,7 +33,7 @@ allRoutes.use(logger());
 
 // registers routes
 
-allRoutes.route("/auth", authenticationRoutes);
+
 allRoutes.route("/api/auth", authRoute);
 allRoutes.route("/users", usersRoutes);
 allRoutes.route("/posts", postRoutes);

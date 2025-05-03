@@ -1,4 +1,4 @@
-import type { Post } from "@prisma/client";
+import type { Post } from "../../generated/prisma";
 
 
 export interface PostResponse {
