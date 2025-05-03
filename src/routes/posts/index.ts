@@ -1,9 +1,7 @@
 import { Hono } from "hono";
-import { tokenMiddleware } from "../middlewares/token-middleware";
 import { getAllPosts, getMyPosts, createPost, deletePost, getPostById, GetUserPosts, getPastPosts, searchPosts } from "./controllers";
 import { PostErrors } from "./types";
 import { sessionMiddleware } from "../middlewares/session-middleware";
-import { prisma } from "../../extras/prisma";
 import { z } from "zod";
 
 
