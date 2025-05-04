@@ -18,22 +18,18 @@ export const getCommentsOnPost = async (
   const skip = (page - 1) * limit;
   const totalComments = await prisma.comment.count({ where: { postId } });
 
-  if (totalComments === 0) {
-    throw new Error(CommentErrors.COMMENT_NOT_FOUND);
-  }
-
   const comments = await prisma.comment.findMany({
     where: { postId },
-    orderBy: { createdAt: "desc" }, 
+    orderBy: { createdAt: "desc" },
     skip,
     take: limit,
     include: {
-        replies: true,  // Include replies to comments
-      },
+      replies: true,
+    },
   });
 
   return {
-    comments,
+    comments, 
     pagination: {
       totalComments,
       totalPages: Math.ceil(totalComments / limit),
