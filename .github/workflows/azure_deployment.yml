@@ -150,8 +150,8 @@ jobs:
             --registry-username "${{ env.ACR_USERNAME }}" \
             --registry-password "${{ env.ACR_PASSWORD }}" \
             --env-vars \  
-              DATABASE_URL=${{ secrets.DATABASE_URL }} \
-              DIRECT_URL=${{secrets.DIRECT_URL}} \
-              WEB_CLIENT_URL=${{secrets.WEB_CLIENT_URL}} \
-              BETTER_AUTH_SECRET=${{secrets.BETTER_AUTH_SECRET}} \
-              SERVER_URL=${{secrets.SERVER_URL}} 
+                DATABASE_URL=${{ secrets.DATABASE_URL }} \
+                DIRECT_URL=${{ secrets.DIRECT_URL }} \
+                WEB_CLIENT_URL=${{ secrets.WEB_CLIENT_URL }} \
+                BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }} \
+                SERVER_URL=${{ secrets.SERVER_URL }} 
