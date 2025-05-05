@@ -149,11 +149,9 @@ jobs:
             --registry-server "${{ env.ACR_REGISTRY }}" \
             --registry-username "${{ env.ACR_USERNAME }}" \
             --registry-password "${{ env.ACR_PASSWORD }}" \
-            
-      - name: Set environment variables for Container App
-        run: |
-          az containerapp update \
-            --name "${{ env.CONTAINER_APP_NAME }}" \
-            --resource-group "${{ env.RESOURCE_GROUP }}" \
-            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }} DIRECT_URL=${{secrets.DIRECT_URL}} WEB_CLIENT_URL=${{secrets.WEB_CLIENT_URL}} BETTER_AUTH_SECRET=${{secrets.BETTER_AUTH_SECRET}} SERVER_URL=${{secrets.SERVER_URL}}
-
+            --env-vars \  
+              DATABASE_URL=${{ secrets.DATABASE_URL }} \
+              DIRECT_URL=${{secrets.DIRECT_URL}} \
+              WEB_CLIENT_URL=${{secrets.WEB_CLIENT_URL}} \
+              BETTER_AUTH_SECRET=${{secrets.BETTER_AUTH_SECRET}} \
+              SERVER_URL=${{secrets.SERVER_URL}} 
