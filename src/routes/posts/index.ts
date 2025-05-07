@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { getAllPosts, getMyPosts, createPost, deletePost, getPostById, GetUserPosts, getPastPosts, searchPosts } from "./controllers";
+import { getAllPosts, getMyPosts, createPost, deletePost, getPostById, getPastPosts, searchPosts, getPostsByUsername } from "./controllers";
 import { PostErrors } from "./types";
 import { sessionMiddleware } from "../middlewares/session-middleware";
 import { z } from "zod";
@@ -162,6 +162,33 @@ postRoutes.delete("/:postId", sessionMiddleware, async (context) => {
       return context.json({ message: PostErrors.INTERNAL_SERVER_ERROR, error: error.message }, 500);
     }
   });
+
+
+
+  postRoutes.get("/:username", async (context) => {
+    const username = context.req.param("username");
+  
+    const pageParam = context.req.query("page");
+    const limitParam = context.req.query("limit");
+  
+    const page = pageParam && !isNaN(Number(pageParam)) ? parseInt(pageParam) : 1;
+    const limit = limitParam && !isNaN(Number(limitParam)) ? parseInt(limitParam) : 10;
+  
+    try {
+      const { posts, pagination } = await getPostsByUsername(username, page, limit);
+      return context.json({ data: posts, pagination }, 200);
+    } catch (error) {
+      const err = error as Error;
+      if (err.message === PostErrors.USER_NOT_FOUND) {
+        return context.json({ message: err.message }, 404);
+      }
+      if (err.message === PostErrors.INVALID_USERNAME || err.message === PostErrors.INVALID_PAGINATION) {
+        return context.json({ message: err.message }, 400);
+      }
+      return context.json({ message: PostErrors.INTERNAL_SERVER_ERROR }, 500);
+    }
+  });
+  
 
 
   

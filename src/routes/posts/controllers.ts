@@ -227,64 +227,6 @@ export const getMyPosts = async (
 
 
 
-  export const GetUserPosts = async (parameters: {
-    userId: string;
-    page: number;
-    limit: number;
-  }): Promise<GetAllPostsResult> => {
-    try {
-      const { userId, page, limit } = parameters;
-  
-      const totalPosts = await prisma.post.count({
-        where: { userId },
-      });
-  
-      if (totalPosts === 0) {
-        throw PostErrors.POST_NOT_FOUND;
-      }
-  
-      const totalPages = Math.ceil(totalPosts / limit);
-      if (page > totalPages) {
-        throw PostErrors.PAGE_BEYOND_LIMIT;
-      }
-  
-      const posts = await prisma.post.findMany({
-        where: { userId },
-        orderBy: { createdAt: "desc" },
-        take: limit,
-        skip: (page - 1) * limit, // Pagination: Skip previous pages
-        include: {
-          user: {
-            select: {
-              username: true,
-            },
-          },
-        },
-      });
-  
-      return {
-        posts,
-        pagination: {
-          totalPosts,
-          totalPages,
-          currentPage: page,
-          limit,
-          hasNextPage: page < totalPages,
-        },
-      };
-    } catch (e) {
-      if (e === PostErrors.POST_NOT_FOUND) {
-        throw PostErrors.POST_NOT_FOUND;
-      }
-      if (e === PostErrors.PAGE_BEYOND_LIMIT) {
-        throw PostErrors.PAGE_BEYOND_LIMIT;
-      }
-      throw PostErrors.UNKNOWN;
-    }
-  };
-  
-
-
   export const searchPosts = async (query: string, pageNum = 1, limitNum = 10) => {
     const skip = (pageNum - 1) * limitNum;
   
@@ -341,4 +283,58 @@ export const getMyPosts = async (
       throw new Error('Error retrieving posts');
     }
   };
+
+
+
+  export const getPostsByUsername = async (
+    username: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<GetAllPostsResult> => {
+    if (!username) {
+      throw new Error(PostErrors.INVALID_USERNAME);
+    }
+  
+    if (page < 1 || limit < 1) {
+      throw new Error(PostErrors.INVALID_PAGINATION);
+    }
+  
+    const skip = (page - 1) * limit;
+  
+    const user = await prisma.user.findUnique({
+      where: { username },
+    });
+  
+    if (!user) {
+      throw new Error(PostErrors.USER_NOT_FOUND);
+    }
+  
+    const totalPosts = await prisma.post.count({
+      where: { userId: user.id },
+    });
+  
+    const posts = await prisma.post.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
+      include: {
+        user: {
+          select: { id: true, username: true },
+        },
+      },
+    });
+  
+    return {
+      posts,
+      pagination: {
+        totalPosts,
+        totalPages: Math.ceil(totalPosts / limit),
+        currentPage: page,
+        limit,
+        hasNextPage: skip + limit < totalPosts,
+      },
+    };
+  };
+  
   

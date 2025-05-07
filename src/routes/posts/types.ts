@@ -44,5 +44,6 @@ export enum PostErrors {
   INVALID_POST_ID = "INVALID_POST_ID",
   USER_NOT_FOUND = "User not found",
   PAGE_BEYOND_LIMIT = "PAGE_BEYOND_LIMIT",
+  INVALID_USERNAME = "Invalid username",
   UNKNOWN = "UNKNOWN",
 }
