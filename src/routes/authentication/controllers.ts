@@ -15,9 +15,9 @@ const generateSessionToken = (): string => {
 
 export const signUpWithUsernameAndPassword = async (parameters: {
   username: string;
-  password: string;
-  name: string;
   email: string;
+  name: string;
+  password: string;
 }): Promise<SignUpWithUsernameAndPasswordResult> => {
   try {
     const existingUser = await prisma.user.findUnique({
