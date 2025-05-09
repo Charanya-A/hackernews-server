@@ -6,7 +6,7 @@ import { username } from "better-auth/plugins";
 
 const betterAuthServerClient = betterAuth({
   baseURL: serveUrl,
-  basePath: "/api/auth",
+  basePath: "/auth",
   trustedOrigins: [webClientUrl],
   secret: betterAuthSecret,
   database: prismaAdapter(prismaClient, {
