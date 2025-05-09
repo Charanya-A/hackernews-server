@@ -1,14 +1,14 @@
 import { Hono } from "hono";
 import { getAllPosts, getMyPosts, createPost, deletePost, getPostById, getPastPosts, searchPosts, getPostsByUsername } from "./controllers";
 import { PostErrors } from "./types";
-import { sessionMiddleware } from "../middlewares/session-middleware";
 import { z } from "zod";
+import { authenticationMiddleware } from "../middlewares/session-middleware";
 
 
 export const postRoutes = new Hono();
 
 // Returns all posts in reverse chronological order (paginated)
-postRoutes.get("/", sessionMiddleware, async (context) => {
+postRoutes.get("/", authenticationMiddleware, async (context) => {
   try {
     const pageParam = context.req.query("page");
     const limitParam = context.req.query("limit");
@@ -33,7 +33,7 @@ postRoutes.get("/", sessionMiddleware, async (context) => {
 
 
 // Returns all posts in reverse chronological order of the current user (referenced by attached JWT) (paginated)
-postRoutes.get("/me", sessionMiddleware, async (context) => {
+postRoutes.get("/me", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const pageParam = context.req.query("page");
@@ -62,7 +62,7 @@ postRoutes.get("/me", sessionMiddleware, async (context) => {
 
 
 // Creates a post (authored by the current user)
-postRoutes.post("/", sessionMiddleware, async (context) => {
+postRoutes.post("/", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const { title, url, content } = await context.req.json();
@@ -80,7 +80,7 @@ postRoutes.post("/", sessionMiddleware, async (context) => {
 
 
 // Deletes a post (if it belongs to the user)
-postRoutes.delete("/:postId", sessionMiddleware, async (context) => {
+postRoutes.delete("/:postId", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const postId = context.req.param("postId");
@@ -116,7 +116,7 @@ postRoutes.delete("/:postId", sessionMiddleware, async (context) => {
     limit: z.string().optional(),
   });
   
-  postRoutes.get("/search", async (c) => {
+  postRoutes.get("/search", authenticationMiddleware, async (c) => {
     const parsed = searchSchema.safeParse(c.req.query());
     if (!parsed.success) {
       return c.json({ error: "Invalid query parameters" }, 400);
@@ -135,7 +135,7 @@ postRoutes.delete("/:postId", sessionMiddleware, async (context) => {
   });
   
 
-  postRoutes.get("/past", sessionMiddleware, async (context) => {
+  postRoutes.get("/past", authenticationMiddleware, async (context) => {
     try {
       const pageParam = context.req.query("page");
       const limitParam = context.req.query("limit");
@@ -165,7 +165,7 @@ postRoutes.delete("/:postId", sessionMiddleware, async (context) => {
 
 
 
-  postRoutes.get("/:username", async (context) => {
+  postRoutes.get("/:username",authenticationMiddleware, async (context) => {
     const username = context.req.param("username");
   
     const pageParam = context.req.query("page");
@@ -192,7 +192,7 @@ postRoutes.delete("/:postId", sessionMiddleware, async (context) => {
 
 
   
-  postRoutes.get("/:postId", async (c) => {
+  postRoutes.get("/:postId",authenticationMiddleware, async (c) => {
     try {
       const postId = c.req.param("postId");
   

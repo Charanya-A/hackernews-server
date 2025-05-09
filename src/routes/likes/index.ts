@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { sessionMiddleware } from "../middlewares/session-middleware";
+import { authenticationMiddleware } from "../middlewares/session-middleware";
 import { LikeErrors } from "./types";
 import { getLikeCount, getLikesOnPost, getLikeStatus, likePost, unlikePost } from "./controllers";
 
@@ -8,7 +8,7 @@ export const likeRoutes = new Hono();
 
 
 // Returns all the likes in reverse chronological order (paginated) on the post referenced by postId
-likeRoutes.get("/on/:postId", sessionMiddleware, async (context) => {
+likeRoutes.get("/on/:postId", authenticationMiddleware, async (context) => {
   try {
     const postId = context.req.param("postId");
     const pageParam = context.req.query("page");
@@ -50,7 +50,7 @@ likeRoutes.get("/on/:postId", sessionMiddleware, async (context) => {
 
 
 // Creates a like (authored by the current user) on the post referenced by postId
-likeRoutes.post("/on/:postId", sessionMiddleware, async (context) => {
+likeRoutes.post("/on/:postId", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const postId = context.req.param("postId");
@@ -87,7 +87,7 @@ likeRoutes.post("/on/:postId", sessionMiddleware, async (context) => {
 
 
 // Deletes the like (if existing and authored by the current user) on the post referenced by postId
-likeRoutes.delete("/on/:postId", sessionMiddleware, async (context) => {
+likeRoutes.delete("/on/:postId", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const postId = context.req.param("postId");
@@ -117,7 +117,7 @@ likeRoutes.delete("/on/:postId", sessionMiddleware, async (context) => {
 
 
 
-likeRoutes.get("/status/:postId", sessionMiddleware, async (context) => {
+likeRoutes.get("/status/:postId", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("userId") || null;
     const postId = context.req.param("postId");
@@ -135,7 +135,7 @@ likeRoutes.get("/status/:postId", sessionMiddleware, async (context) => {
 });
 
 
-likeRoutes.get("/count/:postId", async (context) => {
+likeRoutes.get("/count/:postId", authenticationMiddleware, async (context) => {
   try {
     const postId = context.req.param("postId");
 

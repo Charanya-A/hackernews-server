@@ -4,7 +4,6 @@ import { commentRoutes } from "./comment";
 import { swaggerUI } from "@hono/swagger-ui";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
-import { authRoute } from "./middlewares/session-middleware";
 import { usersRoutes } from "./users";
 import { likeRoutes } from "./likes";
 import { authenticationRoutes } from "./authentication";
@@ -37,7 +36,6 @@ allRoutes.use(logger());
 // registers routes
 
 allRoutes.route("/auth", authenticationRoutes);
-allRoutes.route("/api/auth", authRoute);
 allRoutes.route("/users", usersRoutes);
 allRoutes.route("/posts", postRoutes);
 allRoutes.route("/likes", likeRoutes);

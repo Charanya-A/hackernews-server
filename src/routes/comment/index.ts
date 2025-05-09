@@ -1,13 +1,13 @@
 import { Hono } from "hono";
 import { CommentErrors } from "./types";
-import { sessionMiddleware } from "../middlewares/session-middleware";
+import { authenticationMiddleware } from "../middlewares/session-middleware";
 import { getCommentsOnPost, createComment, deleteComment, updateComment, getCommentById } from "./controllers";
 
 export const commentRoutes = new Hono();
 
 
 // Returns all the comments in reverse chronological order (paginated) on the post referenced by postId
-commentRoutes.get("/on/:postId", sessionMiddleware, async (context) => {
+commentRoutes.get("/on/:postId", authenticationMiddleware, async (context) => {
   try {
     const postId = context.req.param("postId");
         const pageParam = context.req.query("page");
@@ -45,7 +45,7 @@ commentRoutes.get("/on/:postId", sessionMiddleware, async (context) => {
 
 
 // Creates a comment (authored by the current user) on the post referenced by postId
-commentRoutes.post("/on/:postId", sessionMiddleware, async (context) => {
+commentRoutes.post("/on/:postId", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const postId = context.req.param("postId");
@@ -83,7 +83,7 @@ commentRoutes.post("/on/:postId", sessionMiddleware, async (context) => {
 
 
 // Deletes the comment (if existing and authored by the current user)
-commentRoutes.delete("/:commentId", sessionMiddleware, async (context) => {
+commentRoutes.delete("/:commentId", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const commentId = context.req.param("commentId");
@@ -119,7 +119,7 @@ commentRoutes.delete("/:commentId", sessionMiddleware, async (context) => {
 
 
 // Updates the comment's text (if existing and authored by the current user)
-commentRoutes.patch("/:commentId", sessionMiddleware, async (context) => {
+commentRoutes.patch("/:commentId", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("userId");
     const commentId = context.req.param("commentId");
@@ -164,7 +164,7 @@ commentRoutes.patch("/:commentId", sessionMiddleware, async (context) => {
 
 
 
-  commentRoutes.get("/:commentId", sessionMiddleware, async (context) => {
+  commentRoutes.get("/:commentId", authenticationMiddleware, async (context) => {
     try {
       const commentId = context.req.param("commentId");
   

@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { sessionMiddleware } from "../middlewares/session-middleware";
+import { authenticationMiddleware } from "../middlewares/session-middleware";
 import { getAllUsers, getMe } from "./controllers";
 import { GetAllUsersError, GetMeError } from "./types";
 
@@ -8,7 +8,7 @@ import { GetAllUsersError, GetMeError } from "./types";
 export const usersRoutes = new Hono();
 
 // Returns the current user's details (based on JWT token).
-usersRoutes.get("/me", sessionMiddleware, async (context) => {
+usersRoutes.get("/me", authenticationMiddleware, async (context) => {
   try {
     const userId = context.get("user").id;
 
@@ -41,7 +41,7 @@ usersRoutes.get("/me", sessionMiddleware, async (context) => {
 
 // Returns all the users in alphabetical order of their names (paginated).
 //localhost:3000/users?page=1&limit=2 (for pagination)
-usersRoutes.get("", sessionMiddleware, async (context) => {
+usersRoutes.get("", authenticationMiddleware, async (context) => {
   try {
     const pageParam = context.req.query("page");
 const limitParam = context.req.query("limit");

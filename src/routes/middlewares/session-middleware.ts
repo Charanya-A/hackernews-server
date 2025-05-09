@@ -1,37 +1,44 @@
-// session-middleware.tsx
-
-import { Hono } from "hono";
-import { type Session, type User } from "better-auth";
+import type { Session, User } from "better-auth";
 import { createMiddleware } from "hono/factory";
+import { HTTPException } from "hono/http-exception";
 import betterAuthServerClient from "../../integrations/better-auth";
+import { Hono } from "hono";
 
-export const authRoute = new Hono();
-
-authRoute.on(["GET", "POST"], "/*", (context) => {
-  return betterAuthServerClient.handler(context.req.raw);
-});
-
-export type SessionVariables = {
-  user: User;
-  session: Session;
+export type SecureSession = {
+  Variables: {
+    user: User;
+    session: Session;
+    userId: string;
+  };
 };
 
-export const sessionMiddleware = createMiddleware<{
-  Variables: SessionVariables & { userId: string };
-}>(async (context, next) => {
-  const session = await betterAuthServerClient.api.getSession({
-    headers: context.req.raw.headers,
-  });
+export const createUnsecureRoute = (): Hono => {
+  const route = new Hono();
+  return route;
+};
 
-  if (!session) {
-    return context.body(null, 401);
+export const createSecureRoute = (): Hono<SecureSession> => {
+  const route = new Hono<SecureSession>();
+
+  route.use(authenticationMiddleware);
+
+  return route;
+};
+
+export const authenticationMiddleware = createMiddleware<SecureSession>(
+  async (context, next) => {
+    const session = await betterAuthServerClient.api.getSession({
+      headers: context.req.raw.headers,
+    });
+
+    if (!session) {
+      throw new HTTPException(401);
+    }
+
+    context.set("user", session.user as User);
+    context.set("session", session.session as Session);
+    context.set("userId", session.user.id);
+
+    return await next();
   }
-
-  const user = session.user as User;
-
-  context.set("user", user);
-  context.set("session", session.session);
-  context.set("userId", user.id); 
-
-  return await next();
-});
+);

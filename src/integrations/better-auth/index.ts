@@ -11,6 +11,15 @@ const betterAuthServerClient = betterAuth({
   database: prismaAdapter(prismaClient, {
     provider: "postgresql",
   }),
+
+advanced: {
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+      partitioned: true,
+    },
+  },
+
   user: {
     modelName: "User",
   },
