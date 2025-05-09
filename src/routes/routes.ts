@@ -8,15 +8,17 @@ import { authRoute } from "./middlewares/session-middleware";
 import { usersRoutes } from "./users";
 import { likeRoutes } from "./likes";
 import { authenticationRoutes } from "./authentication";
+import { webClientUrl } from "../../environment";
 
 export const allRoutes = new Hono();
 
 allRoutes.use(
   cors({
-    origin: "http://localhost:4000", // Allow only the frontend URL
+    origin: webClientUrl,
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
+    exposeHeaders: ["Content-Length"],
   }),
 );
 
