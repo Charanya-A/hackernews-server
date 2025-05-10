@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 import { CommentErrors } from "./types";
-import { authenticationMiddleware } from "../middlewares/session-middleware";
+import { authenticationMiddleware, type SecureSession } from "../middlewares/session-middleware";
 import { getCommentsOnPost, createComment, deleteComment, updateComment, getCommentById } from "./controllers";
 
-export const commentRoutes = new Hono();
+export const commentRoutes = new Hono<SecureSession>();
 
 
 // Returns all the comments in reverse chronological order (paginated) on the post referenced by postId

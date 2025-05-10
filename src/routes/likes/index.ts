@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import { authenticationMiddleware } from "../middlewares/session-middleware";
+import { authenticationMiddleware, type SecureSession } from "../middlewares/session-middleware";
 import { LikeErrors } from "./types";
 import { getLikeCount, getLikesOnPost, getLikeStatus, likePost, unlikePost } from "./controllers";
 
 
-export const likeRoutes = new Hono();
+export const likeRoutes = new Hono<SecureSession>();
 
 
 // Returns all the likes in reverse chronological order (paginated) on the post referenced by postId

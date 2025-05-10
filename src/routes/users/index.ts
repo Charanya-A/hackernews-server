@@ -1,11 +1,11 @@
 import { Hono } from "hono";
-import { authenticationMiddleware } from "../middlewares/session-middleware";
+import { authenticationMiddleware, type SecureSession } from "../middlewares/session-middleware";
 import { getAllUsers, getMe } from "./controllers";
 import { GetAllUsersError, GetMeError } from "./types";
 
 
 
-export const usersRoutes = new Hono();
+export const usersRoutes = new Hono<SecureSession>();
 
 // Returns the current user's details (based on JWT token).
 usersRoutes.get("/me", authenticationMiddleware, async (context) => {

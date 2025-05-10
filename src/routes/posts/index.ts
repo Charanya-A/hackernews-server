@@ -2,10 +2,10 @@ import { Hono } from "hono";
 import { getAllPosts, getMyPosts, createPost, deletePost, getPostById, getPastPosts, searchPosts, getPostsByUsername } from "./controllers";
 import { PostErrors } from "./types";
 import { z } from "zod";
-import { authenticationMiddleware } from "../middlewares/session-middleware";
+import { authenticationMiddleware, type SecureSession } from "../middlewares/session-middleware";
 
 
-export const postRoutes = new Hono();
+export const postRoutes = new Hono<SecureSession>();
 
 // Returns all posts in reverse chronological order (paginated)
 postRoutes.get("/", authenticationMiddleware, async (context) => {
